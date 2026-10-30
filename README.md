@@ -1,8 +1,12 @@
-# 🗣️ Blender Lip Sync Addon — Boxels Fork for Blender 5.2 LTS
+# 🗣️ Blender Lip Sync Add-on for Blender 5.2 LTS
 
 > **This fork runs on Blender 5.1 and 5.2 LTS.** The original stopped working there (Pose Library crash, Python 3.13 libraries). See [FORK_CHANGES.md](FORK_CHANGES.md).
 >
-> **⬇️ [Download the latest release](https://github.com/BOXELS/lip-sync-5.2/releases/latest)**: pick the zip for your system (Windows, Mac Apple Silicon, Mac Intel, Linux). In Blender go to Edit → Preferences → Get Extensions → ⌄ menu → **Install from Disk** and choose the zip. Don't unzip it first, and don't use GitHub's green "Code → Download ZIP" button, which gives you the source, not an installable add-on.
+> **⬇️ Install:**
+> 1. Click the green **Code** button at the top of this page → **Download ZIP**. Don't unzip it.
+> 2. In Blender: Edit → Preferences → **Get Extensions** → ⌄ menu (top right) → **Install from Disk** → pick the zip.
+>
+> Works on Windows, Mac and Linux. If you had the original Lip Sync installed, uninstall it first. Smaller per-platform zips are on the [Releases page](https://github.com/BOXELS/lip-sync-5.2/releases) when there is one.
 >
 > Original add-on by [Charley 3D](https://github.com/Charley3d/lip-sync), GPL-3.0-or-later. The original docs below still apply, except installation and compatibility (this fork needs Blender 5.1+).
 

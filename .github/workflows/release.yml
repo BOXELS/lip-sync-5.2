@@ -1,0 +1,75 @@
+name: Release
+
+# Push a tag like v2.4.2 and this builds the Windows / macOS / Linux zips
+# and publishes a GitHub Release with them attached. Nothing to upload by hand.
+on:
+  push:
+    tags: ["v*"]
+  release:
+    types: [published] # also covers releases created on the GitHub website
+
+# Tag push + release publish can both fire for one version; run them one at a time
+concurrency:
+  group: release-${{ github.event.release.tag_name || github.ref_name }}
+
+permissions:
+  contents: write # needed to create the release
+
+env:
+  TAG_NAME: ${{ github.event.release.tag_name || github.ref_name }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TAG_NAME }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Check tag matches blender_manifest.toml version
+        run: |
+          TAG="${TAG_NAME#v}"
+          MANIFEST=$(python -c "import tomllib; print(tomllib.load(open('blender_manifest.toml','rb'))['version'])")
+          if [ "$TAG" != "$MANIFEST" ]; then
+            echo "::error::Tag v$TAG doesn't match version = \"$MANIFEST\" in blender_manifest.toml. Bump the manifest version first."
+            exit 1
+          fi
+
+      - name: Build extension zips (Blender's official build tool)
+        run: |
+          mkdir -p "$RUNNER_TEMP/dist"
+          python scripts/blender_ext.py build --source-dir . --output-dir "$RUNNER_TEMP/dist" --split-platforms
+          ls -la "$RUNNER_TEMP/dist"
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${TAG_NAME#v}"
+          cat > notes.md <<EOF
+          **Lip Sync for Blender 5.1 and 5.2 LTS**: fork of [Charley 3D's Lip Sync](https://github.com/Charley3d/lip-sync) (GPL-3.0-or-later).
+
+          ### Download
+          - **Windows:** \`boxels_lip_sync-${VERSION}-windows_x64.zip\`
+          - **Mac (Apple Silicon M1–M4):** \`boxels_lip_sync-${VERSION}-macos_arm64.zip\`
+          - **Mac (Intel):** \`boxels_lip_sync-${VERSION}-macos_x64.zip\`
+          - **Linux:** \`boxels_lip_sync-${VERSION}-linux_x64.zip\` (needs \`libpcaudio0\`)
+
+          **Install:** Blender → Edit → Preferences → Get Extensions → ⌄ menu (top right) → **Install from Disk** → pick the zip. Don't unzip it.
+
+          What changed: see [FORK_CHANGES.md](https://github.com/${GITHUB_REPOSITORY}/blob/${TAG_NAME}/FORK_CHANGES.md).
+          EOF
+          sed -i 's/^          //' notes.md
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            # Release was already created on the website: just attach the zips to it
+            gh release upload "$TAG_NAME" "$RUNNER_TEMP"/dist/*.zip --clobber
+          else
+            gh release create "$TAG_NAME" "$RUNNER_TEMP"/dist/*.zip \
+              --title "v${VERSION}: Lip Sync for Blender 5.2 LTS" \
+              --notes-file notes.md \
+              --latest
+          fi
