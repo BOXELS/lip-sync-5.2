@@ -1,5 +1,7 @@
 import json
 import os
+import struct
+import time
 import wave
 from typing import Literal, cast
 
@@ -230,6 +232,10 @@ def extract_audio():
     output_path = bpy.utils.extension_path_user(package_name, path="tmp", create=True)
     filepath = os.path.join(output_path, "cgp_lipsync_extracted_audio.wav")
 
+    # Never analyse a leftover file from an earlier bake
+    if os.path.exists(filepath):
+        os.remove(filepath)
+
     bpy.ops.sound.mixdown(
         filepath=filepath,
         check_existing=False,
@@ -240,4 +246,36 @@ def extract_audio():
         channels="MONO",  # Vosk prefers mono
     )
 
+    # Blender 5.2 writes the mixdown on a background thread: the operator returns
+    # FINISHED seconds before the file is complete. Wait for a finished WAV.
+    wait_for_complete_wav(filepath)
+
     return filepath
+
+
+def wait_for_complete_wav(filepath: str, timeout: float = 300.0, poll: float = 0.1) -> bool:
+    """
+    Block until ``filepath`` is a fully written WAV file, or ``timeout`` seconds pass.
+
+    A WAV is complete when its RIFF header's size field matches the file size
+    (the header is finalised last) and the size has stopped changing.
+    """
+    deadline = time.monotonic() + timeout
+    last_size = -1
+
+    while time.monotonic() < deadline:
+        if os.path.isfile(filepath):
+            size = os.path.getsize(filepath)
+            if size > 44 and size == last_size:
+                try:
+                    with open(filepath, "rb") as f:
+                        header = f.read(12)
+                    riff_size = struct.unpack("<I", header[4:8])[0]
+                    if header[:4] == b"RIFF" and header[8:12] == b"WAVE" and riff_size == size - 8:
+                        return True
+                except OSError:
+                    pass  # still being written / locked by the writer
+            last_size = size
+        time.sleep(poll)
+
+    return os.path.isfile(filepath)

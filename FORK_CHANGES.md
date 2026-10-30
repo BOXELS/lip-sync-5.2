@@ -4,6 +4,13 @@ A fork of [Charley 3D's Lip Sync](https://github.com/Charley3d/lip-sync) (v2.3.2
 updated to run on **Blender 5.1 and 5.2 LTS**. All original credit goes to Charley 3D.
 This fork stays under the same GPL-3.0-or-later license.
 
+## 2.4.3 (2026-10-30)
+### Fixed
+- **"Error while importing extracted audio WAV file" on Bake audio (Blender 5.2).** Blender 5.2
+  writes the sound mixdown on a background thread, so the file appeared a few seconds after the
+  operator returned and the add-on gave up too early. It now waits until the WAV is fully written.
+- A leftover temp WAV from an earlier bake is deleted first, so a bake can never analyse stale audio.
+
 ## 2.4.2 (2026-10-30)
 ### Added (beginner-friendly)
 - **Auto-Fill Mouth Poses** button (Pose Library mode): fills all mouth slots from your pose
