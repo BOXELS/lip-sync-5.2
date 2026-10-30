@@ -4,6 +4,14 @@ A fork of [Charley 3D's Lip Sync](https://github.com/Charley3d/lip-sync) (v2.3.2
 updated to run on **Blender 5.1 and 5.2 LTS**. All original credit goes to Charley 3D.
 This fork stays under the same GPL-3.0-or-later license.
 
+## 2.5.1 (2026-10-30)
+### Fixed
+- **Refresh Pose Assets flooded the file with duplicates.** It appended every action asset from
+  every .blend in every asset library (body pose packs, other characters' poses, hands, eyes), and
+  each press added another `.001`/`.002` copy. It now asks first, only looks at mouth poses (names
+  containing "Mouth", "Lip" or "Viseme"), skips any pose already in the file (copies included),
+  and *links* instead of appending, so nothing is copied into your character file.
+
 ## 2.5.0 (2026-10-30)
 ### Added
 - **Preview mouth poses.** A ▶ button on every mouth slot eases the character from the rest
