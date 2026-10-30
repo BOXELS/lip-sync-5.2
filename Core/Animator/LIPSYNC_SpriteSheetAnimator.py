@@ -7,6 +7,7 @@ from ...Core.Timeline.LIPSYNC2D_Timeline import LIPSYNC2D_Timeline
 from ...Core.types import VisemeData, WordTiming
 from ...lipsync_types import BpyAction, BpyActionChannelbag, BpyActionSlot, BpyActionKeyframeStrip, BpyContext, BpyObject, BpyPropertyGroup
 from .LIPSYNC2D_ShapeKeysAnimator import LIPSYNC2D_ShapeKeysAnimator
+from .action_compat import iter_fcurves
 from ..Timeline.LIPSYNC2D_TimeConversion import LIPSYNC2D_TimeConversion
 
 class LIPSYNC_SpriteSheetAnimator:
@@ -59,7 +60,7 @@ class LIPSYNC_SpriteSheetAnimator:
         """
         action = obj.animation_data.action if obj.animation_data else None
         if action:
-            for fcurve in action.fcurves:
+            for fcurve in iter_fcurves(action):
                 if fcurve.data_path == "lipsync2d_props.lip_sync_2d_sprite_sheet_index":
                     fcurve.keyframe_points.clear()
 
@@ -206,7 +207,7 @@ class LIPSYNC_SpriteSheetAnimator:
         action = obj.animation_data.action if obj.animation_data else None
 
         if action:
-            for fcurve in action.fcurves:
+            for fcurve in iter_fcurves(action):
                 for keyframe in fcurve.keyframe_points:
                     keyframe.interpolation = 'CONSTANT'
 

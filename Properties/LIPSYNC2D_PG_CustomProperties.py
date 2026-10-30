@@ -56,10 +56,14 @@ def update_sprite_sheet(self: bpy.types.bpy_struct, context: bpy.types.Context):
 
 
 def update_sprite_sheet_format(self: bpy.types.bpy_struct, context: bpy.types.Context):
+    # The format may never have been set (e.g. on a fresh object switched to Pose Library)
+    if "lip_sync_2d_sprite_sheet_format" not in self:
+        return
+
     spritesheet_format = self["lip_sync_2d_sprite_sheet_format"]
 
     if spritesheet_format == 0:
-        self["lip_sync_2d_sprite_sheet_rows"] = self["lip_sync_2d_sprite_sheet_columns"]
+        self["lip_sync_2d_sprite_sheet_rows"] = self.get("lip_sync_2d_sprite_sheet_columns", 1)
     elif spritesheet_format == 2:
         self["lip_sync_2d_sprite_sheet_rows"] = 1
     elif spritesheet_format == 3:

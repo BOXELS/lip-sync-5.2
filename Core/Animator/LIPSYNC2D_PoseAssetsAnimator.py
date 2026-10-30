@@ -3,6 +3,7 @@ from typing import Iterator, Literal, cast
 import bpy
 
 from .LIPSYNC2D_ShapeKeysAnimator import LIPSYNC2D_ShapeKeysAnimator
+from .action_compat import find_fcurve
 
 
 from ..phoneme_to_viseme import (
@@ -178,10 +179,11 @@ class LIPSYNC2D_PoseAssetsAnimator:
         :type interpolation: Literal["LINEAR"]
         """
         for fcurve in self.channelbag.fcurves:
-            pose_asset_fcurve = pose_action.fcurves.find(
-                fcurve.data_path, index=fcurve.array_index
+            # Blender 5.x: Action.fcurves was removed, read through the channelbag instead
+            pose_asset_fcurve = find_fcurve(
+                pose_action, fcurve.data_path, index=fcurve.array_index
             )
-            if pose_asset_fcurve is None:
+            if pose_asset_fcurve is None or len(pose_asset_fcurve.keyframe_points) == 0:
                 continue
 
             # Since Action is from a Pose Asset, we can safely assume that first keyframe point holds the Pose
