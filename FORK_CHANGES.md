@@ -4,6 +4,15 @@ A fork of [Charley 3D's Lip Sync](https://github.com/Charley3d/lip-sync) (v2.3.2
 updated to run on **Blender 5.1 and 5.2 LTS**. All original credit goes to Charley 3D.
 This fork stays under the same GPL-3.0-or-later license.
 
+## 2.4.2 (2026-10-30)
+### Added (beginner-friendly)
+- **Auto-Fill Mouth Poses** button (Pose Library mode): fills all mouth slots from your pose
+  assets by name. Understands mouth-chart names like `Mm`, `F-V`, `A-E`, `O`, `Ooo`, `Sh`,
+  `Default`/`Rest`, `MBP`, `AI`, `WQ`; ignores words like "Mouth" and version numbers like
+  "-2". Prefers poses in a "Mouth" catalog. Any slot can still be changed by hand.
+- Each mouth slot now shows the sounds it covers, e.g. `PP (m b p)`, `ou (oo w)`.
+- "Viseme Settings" is now called "Mouth Poses".
+
 ## 2.4.1 (2026-10-30)
 - Display name back to plain "Lip Sync" (no "(Boxels Fork)" label).
 

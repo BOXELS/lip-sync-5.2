@@ -5,6 +5,26 @@ from .AnimatorPanelMixin import AnimatorPanelMixin
 from ..Core.phoneme_to_viseme import viseme_items_mpeg4_v2 as viseme_items
 from ..lipsync_types import BpyContext, BpyUILayout
 
+# Plain-English sounds for each viseme code, shown next to the code in the panel
+VISEME_SOUND_HINTS = {
+    "sil": "(rest)",
+    "PP": "(m b p)",
+    "FF": "(f v)",
+    "TH": "(th)",
+    "DD": "(d t)",
+    "kk": "(k g)",
+    "CH": "(ch j sh)",
+    "SS": "(s z)",
+    "nn": "(n l)",
+    "RR": "(r)",
+    "aa": "(a)",
+    "E": "(e)",
+    "ih": "(i)",
+    "oh": "(o)",
+    "ou": "(oo w)",
+    "UNK": "(other)",
+}
+
 
 class AnimatorPanelPoseAssetsStrategy(AnimatorPanelMixin):
     def __init__(self, obj: BpyObject):
@@ -48,18 +68,23 @@ class AnimatorPanelPoseAssetsStrategy(AnimatorPanelMixin):
         panel_head, panel_body = layout.panel(
             "cgp_lipsync_viseme_dropdown", default_closed=False
         )
-        panel_head.label(text="Viseme Settings")
+        panel_head.label(text="Mouth Poses")
         if panel_body is not None:
+            row = panel_body.row()
+            row.scale_y = 1.4
+            row.operator("lipsync2d.auto_fill_poses", icon="SHADERFX")
+
             row = panel_body.row(align=True)
-            row.label(text="Viseme")
-            row.label(text="Pose")
+            row.label(text="Sound")
+            row.label(text="Mouth Pose")
 
             visemes = viseme_items(None, None)
 
             for i, viseme in enumerate(visemes):
                 lang_code = list(viseme)[0]
+                hint = VISEME_SOUND_HINTS.get(lang_code, "")
                 row = panel_body.row(align=True)
-                row.label(text=f"{lang_code}")
+                row.label(text=f"{lang_code}  {hint}")
                 row.prop(self.props, f"lip_sync_2d_viseme_pose_{lang_code}", text="")
 
     def draw_thresholds(self, props, layout):
