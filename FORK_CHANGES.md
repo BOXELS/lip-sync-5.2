@@ -4,6 +4,9 @@ A fork of [Charley 3D's Lip Sync](https://github.com/Charley3d/lip-sync) (v2.3.2
 updated to run on **Blender 5.1 and 5.2 LTS**. All original credit goes to Charley 3D.
 This fork stays under the same GPL-3.0-or-later license.
 
+## 2.4.1 (2026-10-30)
+- Display name back to plain "Lip Sync" (no "(Boxels Fork)" label).
+
 ## 2.4.0 (2026-10-30)
 
 ### Fixed
@@ -20,7 +23,7 @@ This fork stays under the same GPL-3.0-or-later license.
   format update callback. It now skips quietly when that setting was never set.
 
 ### Changed
-- Extension id is now `boxels_lip_sync`, named "Lip Sync (Boxels Fork)", so it installs
+- Extension id is now `boxels_lip_sync`, so it installs
   alongside the original instead of replacing it.
 - Minimum Blender version is now 5.1.0 (the Python 3.13 libraries won't load on older
   versions — use the original 2.3.2 for Blender 4.4–5.0).
