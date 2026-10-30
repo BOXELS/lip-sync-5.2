@@ -5,6 +5,19 @@ from .AnimatorPanelMixin import AnimatorPanelMixin
 from ..Core.phoneme_to_viseme import viseme_items_mpeg4_v2 as viseme_items
 from ..lipsync_types import BpyContext, BpyUILayout
 
+def pose_icon_id(action) -> int:
+    """Thumbnail of a pose asset (the Asset Browser picture), or 0 if it has none."""
+    if action is None:
+        return 0
+    preview = getattr(action, "preview", None)
+    if preview is None:
+        return 0
+    try:
+        return preview.icon_id
+    except (AttributeError, RuntimeError):
+        return 0
+
+
 # Plain-English sounds for each viseme code, shown next to the code in the panel
 VISEME_SOUND_HINTS = {
     "sil": "(rest)",
@@ -83,9 +96,27 @@ class AnimatorPanelPoseAssetsStrategy(AnimatorPanelMixin):
             for i, viseme in enumerate(visemes):
                 lang_code = list(viseme)[0]
                 hint = VISEME_SOUND_HINTS.get(lang_code, "")
+                pose = getattr(self.props, f"lip_sync_2d_viseme_pose_{lang_code}", None)
+
                 row = panel_body.row(align=True)
-                row.label(text=f"{lang_code}  {hint}")
-                row.prop(self.props, f"lip_sync_2d_viseme_pose_{lang_code}", text="")
+                split = row.split(factor=0.42, align=True)
+                split.label(text=f"{lang_code}  {hint}")
+
+                right = split.row(align=True)
+                icon_id = pose_icon_id(pose)
+                if icon_id:
+                    right.label(text="", icon_value=icon_id)
+                else:
+                    right.label(text="", icon="BLANK1")
+                right.prop(self.props, f"lip_sync_2d_viseme_pose_{lang_code}", text="")
+
+                play = right.row(align=True)
+                play.enabled = pose is not None
+                op = play.operator("lipsync2d.preview_pose", text="", icon="PLAY")
+                op.viseme = lang_code  # type: ignore
+
+            row = panel_body.row()
+            row.operator("lipsync2d.preview_restore", icon="LOOP_BACK")
 
     def draw_thresholds(self, props, layout):
         row = layout.row()

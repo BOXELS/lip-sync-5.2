@@ -1,6 +1,6 @@
 schema_version = "1.0.0"
 id = "boxels_lip_sync"
-version = "2.4.3"
+version = "2.5.0"
 name = "Lip Sync"
 tagline = "Automatic lip sync, updated for Blender 5.1 and 5.2"
 maintainer = "Boxels (fork of Charley 3D Lip Sync)"

@@ -4,6 +4,14 @@ A fork of [Charley 3D's Lip Sync](https://github.com/Charley3d/lip-sync) (v2.3.2
 updated to run on **Blender 5.1 and 5.2 LTS**. All original credit goes to Charley 3D.
 This fork stays under the same GPL-3.0-or-later license.
 
+## 2.5.0 (2026-10-30)
+### Added
+- **Preview mouth poses.** A ▶ button on every mouth slot eases the character from the rest
+  (sil) pose into that shape in the viewport and holds it. **Back to Rest** returns every touched
+  channel to exactly how it was. Previewing never adds keyframes, and it works on linked /
+  library-overridden characters.
+- **Pose thumbnails.** Each mouth slot shows the pose asset's Asset Browser thumbnail.
+
 ## 2.4.3 (2026-10-30)
 ### Fixed
 - **"Error while importing extracted audio WAV file" on Bake audio (Blender 5.2).** Blender 5.2
